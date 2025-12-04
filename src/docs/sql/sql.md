@@ -1,14 +1,14 @@
 ---
 title: "Learn SQL"
 date: "2025-12-04"
-parent: "sql"
+parent: null
 order: 1
 author: Noyon Rahman
 category: sql
 tags: ["sql", "learn-sql"]
 ---
 
-<img width="100%" style="border-radius: 5px" src="https://i.ibb.co.com/FqSJDVL/sql-banner-image.png" alt="sql-banner-image" />
+![sql-banner-image](https://i.ibb.co.com/FqSJDVL/sql-banner-image.png)
 
 SQL is a standard language for storing, manipulating and retrieving data in databases.
 

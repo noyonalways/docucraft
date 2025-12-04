@@ -13,6 +13,19 @@ const ContentDisplay = async ({ id }) => {
         const children = domNode.children.map((child) => child.data || "");
         return <Link href={href}>{children}</Link>;
       }
+      // if (domNode.name === "img") {
+      //   const src = domNode.attribs.src;
+      //   const alt = domNode.attribs.alt;
+      //   return (
+      //     <Image
+      //       width={200}
+      //       height={200}
+      //       src={src}
+      //       alt={alt}
+      //       className="w-full rounded-xl"
+      //     />
+      //   );
+      // }
     },
   });
 

@@ -33,10 +33,16 @@ export function getDocuments() {
     const matterResult = matter(fileContents);
 
     let parent = matterResult.data.parent;
-    if (!parent) {
+    if (parent === undefined) {
       const parts = id.split("/");
       if (parts.length > 1) {
         parent = parts[parts.length - 2];
+      }
+    } else if (parent && !parent.includes("/")) {
+      const parts = id.split("/");
+      if (parts.length > 1) {
+        const dir = parts.slice(0, -1).join("/");
+        parent = `${dir}/${parent}`;
       }
     }
 

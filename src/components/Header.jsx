@@ -49,8 +49,11 @@ const Header = ({ docs }) => {
               className="lg:hidden"
               onClick={() => setIsMobileSidebarOpen(true)}
             >
-              <Menu className="h-6 w-6 text-zinc-900 dark:text-white" />
+              <Menu className="h-5 w-5 text-zinc-900 dark:text-white" />
             </button>
+            <div className="lg:hidden">
+              <Logo />
+            </div>
 
             {!isDesktopSidebarOpen && (
               <div className="hidden lg:block">
