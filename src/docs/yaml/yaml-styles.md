@@ -2,7 +2,7 @@
 title: "YAML Styles"
 date: "2025-12-04"
 parent: "yaml"
-order: 5
+order: 6
 author: Noyon Rahman
 category: yaml
 tags: ["yaml", "yaml-styles"]

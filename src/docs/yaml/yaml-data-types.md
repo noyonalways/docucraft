@@ -2,7 +2,7 @@
 title: "YAML Data Types"
 date: "2025-12-04"
 parent: "yaml"
-order: 4
+order: 5
 author: Noyon Rahman
 category: yaml
 tags: ["yaml", "yaml-data-types"]

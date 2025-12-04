@@ -2,7 +2,7 @@
 title: "YAML Scalars"
 date: "2025-12-04"
 parent: "yaml"
-order: 8
+order: 9
 author: Noyon Rahman
 category: yaml
 tags: ["yaml", "yaml-scalars"]

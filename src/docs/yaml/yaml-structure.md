@@ -2,7 +2,7 @@
 title: "YAML Structure"
 date: "2025-12-04"
 parent: "yaml"
-order: 9
+order: 10
 author: Noyon Rahman
 category: yaml
 tags: ["yaml", "yaml-structure"]

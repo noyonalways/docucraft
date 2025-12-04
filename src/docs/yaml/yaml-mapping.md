@@ -2,7 +2,7 @@
 title: "YAML Mapping"
 date: "2025-12-04"
 parent: "yaml"
-order: 6
+order: 7
 author: Noyon Rahman
 category: yaml
 tags: ["yaml", "yaml-mapping"]

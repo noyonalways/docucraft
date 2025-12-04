@@ -2,7 +2,7 @@
 title: "YAML Sequences"
 date: "2025-12-04"
 parent: "yaml"
-order: 7
+order: 8
 author: Noyon Rahman
 category: yaml
 tags: ["yaml", "yaml-sequences"]

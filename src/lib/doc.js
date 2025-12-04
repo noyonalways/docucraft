@@ -7,18 +7,43 @@ import html from "remark-html";
 
 const postsDirectory = path.join(process.cwd(), "src/docs");
 
-export function getDocuments() {
-  const fileNames = fs.readdirSync(postsDirectory);
+function getAllFiles(dirPath, arrayOfFiles) {
+  const files = fs.readdirSync(dirPath);
+  arrayOfFiles = arrayOfFiles || [];
 
-  const allDocuments = fileNames.map((fileName) => {
-    const id = fileName.replace(".md", "");
-    const fullPath = path.join(postsDirectory, fileName);
-    const fileContents = fs?.readFileSync(fullPath, "utf8");
+  files.forEach(function (file) {
+    const fullPath = path.join(dirPath, file);
+    if (fs.statSync(fullPath).isDirectory()) {
+      arrayOfFiles = getAllFiles(fullPath, arrayOfFiles);
+    } else {
+      arrayOfFiles.push(fullPath);
+    }
+  });
+
+  return arrayOfFiles;
+}
+
+export function getDocuments() {
+  const allFiles = getAllFiles(postsDirectory);
+
+  const allDocuments = allFiles.map((fullPath) => {
+    const relativePath = path.relative(postsDirectory, fullPath);
+    const id = relativePath.replace(/\.md$/, "").replace(/\\/g, "/");
+    const fileContents = fs.readFileSync(fullPath, "utf8");
     const matterResult = matter(fileContents);
+
+    let parent = matterResult.data.parent;
+    if (!parent) {
+      const parts = id.split("/");
+      if (parts.length > 1) {
+        parent = parts[parts.length - 2];
+      }
+    }
 
     return {
       id,
       ...matterResult.data,
+      parent,
     };
   });
 
@@ -34,15 +59,21 @@ export function getDocuments() {
 }
 
 export async function getDocumentContent(id) {
-  const fullPath = path.join(postsDirectory, `${id}.md`);
+  let fullPath = path.join(postsDirectory, `${id}.md`);
+
+  // Fallback: if not found, try flat structure (for backward compatibility or mixed mode)
   if (!fs.existsSync(fullPath)) {
-    throw new Error(`Document with id ${id} does not exist`);
+    const flatName = id.split("/").pop();
+    const flatPath = path.join(postsDirectory, `${flatName}.md`);
+    if (fs.existsSync(flatPath)) {
+      fullPath = flatPath;
+    } else {
+      throw new Error(`Document with id ${id} does not exist`);
+    }
   }
 
   const fileContents = fs.readFileSync(fullPath, "utf8");
-
   const matterResult = matter(fileContents);
-
   const processedContent = await remark()
     .use(remarkGfm) // ← ENABLE TABLES + EXTRA MARKDOWN FEATURES
     .use(html)

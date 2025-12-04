@@ -2,7 +2,7 @@
 title: "What is a YAML used for?"
 date: "2025-12-04"
 parent: "yaml"
-order: 1
+order: 2
 author: Noyon Rahman
 category: yaml
 tags: ["yaml", "getting-started"]

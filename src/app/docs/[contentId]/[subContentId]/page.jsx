@@ -2,8 +2,9 @@ import ContentDisplay from "@/components/ContentDisplay";
 
 const SubContentPage = async ({ params }) => {
   const resolvedParams = await params;
-  const { subContentId } = resolvedParams;
-  return <ContentDisplay id={subContentId} />;
+  const { contentId, subContentId } = resolvedParams;
+  const id = `${contentId}/${subContentId}`;
+  return <ContentDisplay id={id} />;
 };
 
 export default SubContentPage;

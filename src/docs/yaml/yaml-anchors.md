@@ -2,7 +2,7 @@
 title: "YAML Anchors"
 date: "2025-12-04"
 parent: "yaml"
-order: 11
+order: 12
 author: Noyon Rahman
 category: yaml
 tags: ["yaml", "yaml-anchors"]
