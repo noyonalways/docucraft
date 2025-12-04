@@ -1,11 +1,60 @@
+"use client";
+
+import {
+  getDocumentsByAuthor,
+  getDocumentsByCategory,
+  getDocumentsByTag,
+} from "@/utils/doc";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const Sidebar = ({ docs }) => {
-  const parents = docs.filter((doc) => !doc.parent);
-  const groupedAllChildren = Object.groupBy(
-    docs.filter((doc) => doc.parent),
-    ({ parent }) => parent
-  );
+  const [parents, setParents] = useState([]);
+  const [groupedAllChildren, setGroupedAllChildren] = useState({});
+  const pathname = usePathname();
+
+  useEffect(() => {
+    let matchedDocs = docs;
+
+    if (pathname.includes("/tags")) {
+      const tag = pathname.split("/")[2];
+      matchedDocs = getDocumentsByTag(docs, tag);
+    } else if (pathname.includes("/authors")) {
+      const author = pathname.split("/")[2];
+      matchedDocs = getDocumentsByAuthor(docs, author);
+    } else if (pathname.includes("/categories")) {
+      const category = pathname.split("/")[2];
+      matchedDocs = getDocumentsByCategory(docs, category);
+    }
+
+    const parentNodes = matchedDocs.filter((doc) => !doc.parent);
+    const groupedChildrenNodes = Object.groupBy(
+      matchedDocs.filter((doc) => doc.parent),
+      ({ parent }) => parent
+    );
+    const childrenNodeKeys = Reflect.ownKeys(groupedChildrenNodes);
+    childrenNodeKeys.forEach((key) => {
+      const foundInRoots = parentNodes.find((root) => root.id === key);
+      if (!foundInRoots) {
+        const foundInDocs = docs.find((doc) => doc.id === key);
+        parentNodes.push(foundInDocs);
+      }
+    });
+
+    parentNodes.sort((a, b) => {
+      if (a.order < b.order) {
+        return -1;
+      }
+      if (a.order > b.order) {
+        return 1;
+      }
+      return 0;
+    });
+
+    setParents([...parentNodes]);
+    setGroupedAllChildren({ ...groupedChildrenNodes });
+  }, [pathname]);
 
   return (
     <nav className="lg:block my-10">
