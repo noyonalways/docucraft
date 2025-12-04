@@ -27,13 +27,13 @@ const Landing = () => {
                 </Link>
               </div>
             </div>
-            <div className="relative lg:col-span-3">
+            <div className=" relative lg:col-span-3">
               <Image
                 src="/banner.png"
                 alt="Banner"
                 width="1600"
                 height="1280"
-                className="relative z-20 -mb-36 aspect-853/682 max-w-[630px] rounded-xl bg-slate-200 shadow-xl shadow-black/5 ring-1 ring-slate-900/5 sm:-mb-16 lg:-mb-8 xl:-mb-16"
+                className="w-full relative z-20 -mb-36 aspect-853/682 max-w-[630px] rounded-xl bg-slate-200 shadow-xl shadow-black/5 ring-1 ring-slate-900/5 sm:-mb-16 lg:-mb-8 xl:-mb-16"
               />
             </div>
           </div>
