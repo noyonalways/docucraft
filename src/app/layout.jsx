@@ -1,3 +1,4 @@
+import AdSense from "@/components/adsense";
 import ContentDisplaySkeleton from "@/components/ContentDisplaySkeleton";
 import Header from "@/components/Header";
 import MainLayout from "@/components/MainLayout";
@@ -27,6 +28,13 @@ export default function RootLayout({ children }) {
   const docs = getDocuments();
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <AdSense pubId="ca-pub-6721594154492556" />
+        <meta
+          name="google-site-verification"
+          content="jJtpLqOAtKxVMyWZ3fZTjPVLW8xexGIU7rV1Enr4cRI"
+        />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ThemeProvider
           attribute="class"

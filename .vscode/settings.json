@@ -7,5 +7,12 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": "always"
   },
-  "cSpell.words": ["docsdb", "Docu", "docucraft", "Noyon", "Rahman"]
+  "cSpell.words": [
+    "adsbygoogle",
+    "docsdb",
+    "Docu",
+    "docucraft",
+    "Noyon",
+    "Rahman"
+  ]
 }
