@@ -38,7 +38,7 @@ const Header = ({ docs }) => {
           <div className="flex items-center gap-4">
             <button
               type="button"
-              className="hidden lg:block text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+              className="hidden lg:block text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white cursor-pointer"
               onClick={toggleSidebar}
             >
               <PanelLeft className="h-5 w-5" />
