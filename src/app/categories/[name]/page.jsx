@@ -5,7 +5,7 @@ import { getDocumentsByCategory } from "@/utils/doc";
 const CategoriesPage = async ({ params }) => {
   const resolvedParams = await params;
   const { name } = resolvedParams;
-  const docs = getDocuments();
+  const docs = await getDocuments();
   const matchedDocs = getDocumentsByCategory(docs, name);
   return <ContentDisplay id={matchedDocs[0]?.id} />;
 };

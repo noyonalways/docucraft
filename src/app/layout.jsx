@@ -1,12 +1,10 @@
 import AdSense from "@/components/adsense";
-import ContentDisplaySkeleton from "@/components/ContentDisplaySkeleton";
 import Header from "@/components/Header";
 import MainLayout from "@/components/MainLayout";
 import { getDocuments } from "@/lib/doc";
 import { SidebarProvider } from "@/providers/sidebar-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Suspense } from "react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -24,8 +22,8 @@ export const metadata = {
   description: "A documentation website for DocsDB",
 };
 
-export default function RootLayout({ children }) {
-  const docs = getDocuments();
+export default async function RootLayout({ children }) {
+  const docs = await getDocuments();
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -44,19 +42,17 @@ export default function RootLayout({ children }) {
         >
           <SidebarProvider>
             <MainLayout>
-              <Suspense fallback={<ContentDisplaySkeleton />}>
-                <Header docs={docs} />
-                <div className="relative px-4 pt-14 sm:px-6 lg:px-8">
-                  <main className="flex-auto py-16">
-                    <div className="absolute inset-0 -z-10 mx-0 max-w-none overflow-hidden">
-                      <div className="absolute left-1/2 top-0 -ml-152 h-100 w-325 dark:mask-[linear-gradient(white,transparent)]">
-                        <div className="absolute inset-0 bg-linear-to-r from-[#36b49f] to-[#DBFF75] opacity-40 mask-[radial-gradient(farthest-side_at_top,white,transparent)] dark:from-[#36b49f]/30 dark:to-[#DBFF75]/30 dark:opacity-100"></div>
-                      </div>
+              <Header docs={docs} />
+              <div className="relative px-4 pt-14 sm:px-6 lg:px-8">
+                <main className="flex-auto py-16">
+                  <div className="absolute inset-0 -z-10 mx-0 max-w-none overflow-hidden">
+                    <div className="absolute left-1/2 top-0 -ml-152 h-100 w-325 dark:mask-[linear-gradient(white,transparent)]">
+                      <div className="absolute inset-0 bg-linear-to-r from-[#36b49f] to-[#DBFF75] opacity-40 mask-[radial-gradient(farthest-side_at_top,white,transparent)] dark:from-[#36b49f]/30 dark:to-[#DBFF75]/30 dark:opacity-100"></div>
                     </div>
-                    {children}
-                  </main>
-                </div>
-              </Suspense>
+                  </div>
+                  {children}
+                </main>
+              </div>
             </MainLayout>
           </SidebarProvider>
         </ThemeProvider>

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const Landing = async () => {
-  const docs = getDocuments();
+  const docs = await getDocuments();
   const getStartedDoc = docs.find((doc) => doc.parent === null);
   return (
     <article>

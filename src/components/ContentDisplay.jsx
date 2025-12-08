@@ -1,10 +1,15 @@
 import { getDocumentContent } from "@/lib/doc";
 import parse from "html-react-parser";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import Tag from "./Tag";
 
 const ContentDisplay = async ({ id }) => {
   const documentContent = await getDocumentContent(id);
+
+  if (!documentContent) {
+    notFound();
+  }
 
   const transformedContent = parse(documentContent.contentHtml, {
     replace: (domNode) => {

@@ -7,6 +7,11 @@ export async function generateMetadata({ params }) {
   const { contentId } = resolvedParams;
   try {
     const documentContent = await getDocumentContent(contentId);
+    if (!documentContent) {
+      return {
+        title: "Document Not Found",
+      };
+    }
     return {
       title: documentContent.title,
     };

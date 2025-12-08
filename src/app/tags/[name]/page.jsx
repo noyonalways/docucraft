@@ -6,7 +6,7 @@ const TagPage = async ({ params }) => {
   const resolvedParams = await params;
   const { name } = resolvedParams;
 
-  const docs = getDocuments();
+  const docs = await getDocuments();
   const matchedDocuments = getDocumentsByTag(docs, name);
 
   return <ContentDisplay id={matchedDocuments[0].id} />;

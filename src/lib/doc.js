@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "fs/promises";
 import matter from "gray-matter";
 import path from "path";
 import rehypeRaw from "rehype-raw";
@@ -10,83 +10,86 @@ import remarkRehype from "remark-rehype";
 
 const postsDirectory = path.join(process.cwd(), "src/docs");
 
-function getAllFiles(dirPath, arrayOfFiles) {
-  const files = fs.readdirSync(dirPath);
+async function getAllFiles(dirPath, arrayOfFiles) {
+  const files = await fs.readdir(dirPath);
   arrayOfFiles = arrayOfFiles || [];
 
-  files.forEach(function (file) {
+  for (const file of files) {
     const fullPath = path.join(dirPath, file);
-    if (fs.statSync(fullPath).isDirectory()) {
-      arrayOfFiles = getAllFiles(fullPath, arrayOfFiles);
+    const stat = await fs.stat(fullPath);
+    if (stat.isDirectory()) {
+      arrayOfFiles = await getAllFiles(fullPath, arrayOfFiles);
     } else {
       arrayOfFiles.push(fullPath);
     }
-  });
+  }
 
   return arrayOfFiles;
 }
 
-export function getDocuments() {
-  const allFiles = getAllFiles(postsDirectory);
+export async function getDocuments() {
+  const allFiles = await getAllFiles(postsDirectory);
 
-  const allDocuments = allFiles.map((fullPath) => {
-    const relativePath = path.relative(postsDirectory, fullPath);
-    let id = relativePath.replace(/\.md$/, "").replace(/\\/g, "/");
+  const allDocuments = await Promise.all(
+    allFiles.map(async (fullPath) => {
+      const relativePath = path.relative(postsDirectory, fullPath);
+      let id = relativePath.replace(/\.md$/, "").replace(/\\/g, "/");
 
-    // Handle "folder/folder" pattern -> "folder"
-    const parts = id.split("/");
-    if (
-      parts.length > 1 &&
-      parts[parts.length - 1] === parts[parts.length - 2]
-    ) {
-      parts.pop();
-      id = parts.join("/");
-    }
-
-    const fileContents = fs.readFileSync(fullPath, "utf8");
-    const matterResult = matter(fileContents);
-
-    let parent = matterResult.data.parent;
-    if (parent === undefined) {
+      // Handle "folder/folder" pattern -> "folder"
       const parts = id.split("/");
-      if (parts.length > 1) {
-        parent = parts[parts.length - 2];
+      if (
+        parts.length > 1 &&
+        parts[parts.length - 1] === parts[parts.length - 2]
+      ) {
+        parts.pop();
+        id = parts.join("/");
       }
-    } else if (parent && !parent.includes("/")) {
-      const parts = id.split("/");
-      if (parts.length > 1) {
-        const dir = parts.slice(0, -1).join("/");
-        parent = `${dir}/${parent}`;
 
-        // Normalize parent ID if it matches folder/folder pattern
-        const pParts = parent.split("/");
-        if (
-          pParts.length > 1 &&
-          pParts[pParts.length - 1] === pParts[pParts.length - 2]
-        ) {
-          pParts.pop();
-          parent = pParts.join("/");
+      const fileContents = await fs.readFile(fullPath, "utf8");
+      const matterResult = matter(fileContents);
+
+      let parent = matterResult.data.parent;
+      if (parent === undefined) {
+        const parts = id.split("/");
+        if (parts.length > 1) {
+          parent = parts[parts.length - 2];
+        }
+      } else if (parent && !parent.includes("/")) {
+        const parts = id.split("/");
+        if (parts.length > 1) {
+          const dir = parts.slice(0, -1).join("/");
+          parent = `${dir}/${parent}`;
+
+          // Normalize parent ID if it matches folder/folder pattern
+          const pParts = parent.split("/");
+          if (
+            pParts.length > 1 &&
+            pParts[pParts.length - 1] === pParts[pParts.length - 2]
+          ) {
+            pParts.pop();
+            parent = pParts.join("/");
+          }
         }
       }
-    }
 
-    const isRoot =
-      !id.includes("/") && (parent === null || parent === undefined);
-    const folderLabel = isRoot
-      ? id
-          .split("/")
-          .pop()
-          .replace(/-/g, " ")
-          .replace(/\b\w/g, (c) => c.toUpperCase())
-      : undefined;
+      const isRoot =
+        !id.includes("/") && (parent === null || parent === undefined);
+      const folderLabel = isRoot
+        ? id
+            .split("/")
+            .pop()
+            .replace(/-/g, " ")
+            .replace(/\b\w/g, (c) => c.toUpperCase())
+        : undefined;
 
-    return {
-      id,
-      ...matterResult.data,
-      parent,
-      folderLabel,
-    };
-  });
+      return {
+        id,
+        ...matterResult.data,
+        parent,
+        folderLabel,
+      };
+    })
+  );
 
   return allDocuments.sort((a, b) => {
     if (a.order < b.order) {
@@ -102,33 +105,41 @@ export function getDocuments() {
 export async function getDocumentContent(id) {
   let fullPath = path.join(postsDirectory, `${id}.md`);
 
+  // Helper to check if file exists
+  const fileExists = async (path) => {
+    try {
+      await fs.access(path);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   // Fallback 1: Check for folder/folder.md pattern (e.g. nextjs -> nextjs/nextjs.md)
-  if (!fs.existsSync(fullPath)) {
+  if (!(await fileExists(fullPath))) {
     const folderDocPath = path.join(
       postsDirectory,
       id,
       `${path.basename(id)}.md`
     );
-    if (fs.existsSync(folderDocPath)) {
+    if (await fileExists(folderDocPath)) {
       fullPath = folderDocPath;
     }
   }
 
   // Fallback 2: attempt flat structure
-  if (!fs.existsSync(fullPath)) {
+  if (!(await fileExists(fullPath))) {
     const flatName = id.split("/").pop();
     const flatPath = path.join(postsDirectory, `${flatName}.md`);
-    if (fs.existsSync(flatPath)) {
+    if (await fileExists(flatPath)) {
       fullPath = flatPath;
     } else {
-      const err = new Error(`Document with id ${id} does not exist`);
-      err.status = 404;
-      throw err;
+      return null;
     }
   }
 
   // Read markdown file
-  const fileContents = fs.readFileSync(fullPath, "utf8");
+  const fileContents = await fs.readFile(fullPath, "utf8");
   const matterResult = matter(fileContents);
 
   // Convert markdown → HTML
@@ -137,12 +148,14 @@ export async function getDocumentContent(id) {
     .use(remarkGfm)
     .use(remarkRehype, { allowDangerousHtml: true }) // allow raw HTML
     .use(rehypeRaw) // process raw HTML
-    .use(rehypeStringify)
+    .use(rehypeStringify) // convert to HTML string
     .process(matterResult.content);
+
+  const contentHtml = processedContent.toString();
 
   return {
     id,
-    contentHtml: processedContent.toString(),
+    contentHtml,
     ...matterResult.data,
   };
 }
