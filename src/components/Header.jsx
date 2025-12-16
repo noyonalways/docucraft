@@ -19,13 +19,13 @@ const Header = ({ docs }) => {
           isDesktopSidebarOpen ? "lg:block" : "lg:hidden"
         }`}
       >
-        <div className="hidden lg:block sticky top-0 bg-white">
+        <div className="hidden lg:block sticky top-0 bg-white dark:bg-transparent">
           <Logo />
         </div>
         <div className="hidden lg:block">
           <Sidebar docs={docs} />
         </div>
-        <div className="fixed bottom-0 text-center lg:left-6 bg-white  z-20 py-2 w-full md:w-auto">
+        <div className="fixed bottom-0 text-center lg:left-6 bg-white dark:bg-transparent  z-20 py-2 w-full md:w-auto">
           <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400">
             &copy; {new Date().getFullYear()} DocsDB. All rights reserved.
           </p>
